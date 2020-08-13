@@ -1,0 +1,116 @@
+﻿@model IEnumerable<GovernmentTaxPrj.Models.TaxPayer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+    <div class="row">
+
+        <div class="col">
+            <label for="regionid" class="control-label">Region</label>
+            <select id="regionid" class="form-control" asp-items="ViewBag.RegionId"><option>Please Select Region</option></select>
+        </div>
+        <div class="col">
+            <label for="townshipid" name="TownshipId" class="control-label">Township</label>
+            <select id="townshipid" class="form-control" name="TownshipId" asp-items="ViewBag.TownshipId"><option>Please Select Township</option></select>
+        </div>
+        <div class="col">
+            @using (Html.BeginForm())
+            {
+                <p>
+                    @*Find by name or township: @Html.TextBox("SearchString")*@
+                    Find by name or township:<br /><input type="text" id="township" name="SearchString" />
+                    <input type="submit" id="search" value="Search" />
+                </p>
+            }
+        </div>
+    </div>
+    <br /><br />
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th style="width:120px">
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TinNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Address)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nrc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TaxType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Township)
+                </th>
+                <th style="width:200px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TinNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nrc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TaxType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Township.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+        @section scripts{
+            
+            <script>
+                $(document).ready(function () {
+                    $("#townshipid").change(function () {
+                        var townshipid = $("#townshipid").val();                       
+
+                        Index(townshipid);
+                    });
+                });
+                function Index(townshipid) {
+                    $.ajax({
+                        type: "Get",
+                        url: "/TaxPayers/Index",
+                        contentType: "application/JSON",
+                        data: { TownshipId: townshipid },
+                        
+                        success: function (data) {
+                            
+                            console.log(data);
+                            //$('#returndate').append("<option value=" + id + ">" + returndate + "</option>")
+                        }
+                    });
+                };
+            </script>
+        }
